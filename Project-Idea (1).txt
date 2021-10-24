@@ -2,17 +2,17 @@ Idea 1:
 
 Title: DEBOUNCING BUTTONS
 
-Objective:  To count the number of times the button is pressed accurately using verilog.
+Objective: To count the number of times the button is pressed accurately using verilog.
 
 Motivation: Mechanical switches/buttons cause an unpredictable bounce in the signal when toggled. 
-                        Normally when a button is pressed a lot bouncing occurs which causes disturbances.
-                        Using debouncing buttons we generate pulse of period of the slow clock without bouncing as we expected. 
+            Normally when a button is pressed a lot bouncing occurs which causes disturbances.
+            Using debouncing buttons we generate pulse of period of the slow clock without bouncing as we expected. 
              
 Implementation: Using RTL we are generating a single pulse when pressing a button on FPGA.
 
 Functionality: Used mainly in arduino circuits. 
-                            Used in circuits where we have to count the number of time buttons is pressed.
-                            Used to generate pwm waves using pushbuttons.
+               Used in circuits where we have to count the number of time buttons is pressed.
+               Used to generate pwm waves using pushbuttons.
  
 
 Idea 2:
