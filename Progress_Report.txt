@@ -1,0 +1,119 @@
+//FPGA ALARM CLOCK
+
+//Alarm Module
+module alarm_clock (
+ input reset,                           //reset alarm time to 00
+ input clk,                               //builtin clock signal
+ input [1:0] Hr1_in,             //2 bit to set most significant bit of hr (can be 0, 1 or 2)
+ input [3:0] Hr0_in,             //4 bit to set least significant bit of hr (0 to 9)
+ input [3:0] Min1_in,          //4 bit for most significant bit of min (0 to 9)
+ input [3:0] Min0_in,          //4 bit to set least significant bit of min( 0 to 9)
+ input Set_time,                   //If 1 then time should be set as per the user input
+ input Set_alarm,                //If 1 then alarm is set as per input
+ input STOP,                          //If alarm clock was on this will bring output to low
+ input ON,                             //Alarm clock is on & when time equals alarm time the alarm will go high
+ output reg Alarm,              //Will go high if clock on & time matches 
+ output [1:0]  Hr1_out,      // most significant bit of hr (0 1 2)
+ output [3:0]  Hr0_out,      //least significant bit of hr  (0 ,1 ,2)
+ output [3:0]  Min1_out,   //least significant bit of min  (0-9)
+ output [3:0]  Min0_out,   // most significant bit of min (0-5)
+ output [3:0]  Sec1_out,    // most significant bit of seconds (0-9)
+ output [3:0]  Sec0_out,    // least significant bit of hr (0-5)
+ output [6:0] seg,                //seven segments for display
+ output [3:0] an                   //4 enablers for each seven segment display
+ );
+
+
+//7-Segment Display
+module seven_segment (
+input clk,                                  //builtin clock signal
+input [3:0] Min0_in,            //4 bit to set least significant bit of min( 0 to 9)
+input [3:0] Min1_in,            //4 bit for most significant bit of min (0 to 9)
+input [3:0] Hr0_in,              //4 bit to set least significant bit of hr (0 to 9)
+input [1:0] Hr1_in,               //2 bit to set most significant bit of hr (can be 0, 1 or 2)
+output reg [6:0] seg,           //seven segments for display
+output reg [3:0] an             //4 enablers for each seven segment display
+);
+
+
+//Constraints
+
+//Clock signal
+set_property PACKAGE_PIN W5 [get_ports clk]							
+set_property IOSTANDARD LVCMOS33 [get_ports clk]
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
+ 
+
+//LEDs
+set_property PACKAGE_PIN U16 [get_ports {led[0]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[0]}]
+set_property PACKAGE_PIN E19 [get_ports {led[1]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[1]}]
+set_property PACKAGE_PIN U19 [get_ports {led[2]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[2]}]
+set_property PACKAGE_PIN V19 [get_ports {led[3]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[3]}]
+set_property PACKAGE_PIN W18 [get_ports {led[4]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[4]}]
+set_property PACKAGE_PIN U15 [get_ports {led[5]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[5]}]
+set_property PACKAGE_PIN U14 [get_ports {led[6]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[6]}]
+set_property PACKAGE_PIN V14 [get_ports {led[7]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[7]}]
+set_property PACKAGE_PIN V13 [get_ports {led[8]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[8]}]
+set_property PACKAGE_PIN V3 [get_ports {led[9]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[9]}]
+set_property PACKAGE_PIN W3 [get_ports {led[10]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[10]}]
+set_property PACKAGE_PIN U3 [get_ports {led[11]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[11]}]
+set_property PACKAGE_PIN P3 [get_ports {led[12]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[12]}]
+set_property PACKAGE_PIN N3 [get_ports {led[13]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[13]}]
+set_property PACKAGE_PIN P1 [get_ports {led[14]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[14]}]
+set_property PACKAGE_PIN L1 [get_ports {led[15]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {led[15]}]
+	
+	
+//7 segment display
+set_property PACKAGE_PIN W7 [get_ports {seg[0]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {seg[0]}]
+set_property PACKAGE_PIN W6 [get_ports {seg[1]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {seg[1]}]
+set_property PACKAGE_PIN U8 [get_ports {seg[2]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {seg[2]}]
+set_property PACKAGE_PIN V8 [get_ports {seg[3]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {seg[3]}]
+set_property PACKAGE_PIN U5 [get_ports {seg[4]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {seg[4]}]
+set_property PACKAGE_PIN V5 [get_ports {seg[5]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {seg[5]}]
+set_property PACKAGE_PIN U7 [get_ports {seg[6]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {seg[6]}]
+set_property PACKAGE_PIN V7 [get_ports dp]							
+set_property IOSTANDARD LVCMOS33 [get_ports dp]
+set_property PACKAGE_PIN U2 [get_ports {an[0]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {an[0]}]
+set_property PACKAGE_PIN U4 [get_ports {an[1]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {an[1]}]
+set_property PACKAGE_PIN V4 [get_ports {an[2]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {an[2]}]
+set_property PACKAGE_PIN W4 [get_ports {an[3]}]					
+set_property IOSTANDARD LVCMOS33 [get_ports {an[3]}]
+
+
+//Buttons
+set_property PACKAGE_PIN U18 [get_ports btnC]						
+set_property IOSTANDARD LVCMOS33 [get_ports btnC]
+set_property PACKAGE_PIN T18 [get_ports btnU]						
+set_property IOSTANDARD LVCMOS33 [get_ports btnU]
+set_property PACKAGE_PIN W19 [get_ports btnL]						
+set_property IOSTANDARD LVCMOS33 [get_ports btnL]
+set_property PACKAGE_PIN T17 [get_ports btnR]						
+set_property IOSTANDARD LVCMOS33 [get_ports btnR]
+set_property PACKAGE_PIN U17 [get_ports btnD]						
+set_property IOSTANDARD LVCMOS33 [get_ports btnD]
